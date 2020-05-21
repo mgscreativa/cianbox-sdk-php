@@ -19,7 +19,7 @@ As a dependency in your project's composer.json
 ```json
 {
     "require": {
-        "enviopack/sdk": "0.1.0"
+        "cianbox/sdk": "0.1.0"
     }
 }
 ```

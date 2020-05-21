@@ -1,6 +1,6 @@
 {
-	"name": "cianbox/sdk",
-	"description": "cianbox SDK Api Integration Library",
+  "name": "cianbox/sdk",
+  "description": "Cianbox SDK Api Integration Library",
   "license": "MIT",
 	"keywords": ["cianbox", "sdk"],
 	"authors": [
