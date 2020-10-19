@@ -9,7 +9,7 @@
 
 class CianboxApi
 {
-    const VERSION = '0.1.0';
+    const VERSION = '0.1.2';
 
     private $account;
     private $user;
@@ -23,7 +23,7 @@ class CianboxApi
         $i = func_num_args();
 
         if ($i !== 3) {
-            throw new CianboxApiException('Argumentos inválidos. Use ACCOUNT, USER y PASSWORD');
+            throw new CianboxApiException('API CianboxApi: Argumentos inválidos. Use ACCOUNT, USER y PASSWORD', 400);
         }
 
         if ($i == 3) {
@@ -98,7 +98,7 @@ class CianboxApi
     public function get_clientes_lista($params = null)
     {
         if (is_null($params) || !is_array($params)) {
-            throw new CianboxApiException('EL parámetro de búsqueda debe ser un array', 400);
+            throw new CianboxApiException('API get_clientes_lista: El parámetro de búsqueda debe ser un array', 400);
         }
 
         $params["access_token"] = $this->post_auth_credentials();
@@ -134,7 +134,7 @@ class CianboxApi
     public function get_productos_lista($params = null)
     {
         if (is_null($params) || !is_array($params)) {
-            throw new CianboxApiException('EL parámetro de búsqueda debe ser un array', 400);
+            throw new CianboxApiException('API get_productos_lista: El parámetro de búsqueda debe ser un array', 400);
         }
 
         $params["access_token"] = $this->post_auth_credentials();
@@ -146,8 +146,23 @@ class CianboxApi
         );
 
         $response = CBRestClient::get($request);
+        $responseBody = $response['response']['body'];
 
-        return $response['response']['body'];
+        if($response['response']['total_pages'] > 1) {
+            for ($i = 2; $i <= $response['response']['total_pages']; $i++) {
+                $params["page"] = $i;
+                $request = array(
+                    'uri' => '/productos/lista',
+                    'params' => $params,
+                    'account' => $this->account,
+                );
+
+                $response = CBRestClient::get($request);
+                $responseBody = array_merge($responseBody, $response['response']['body']);
+            }
+        }
+
+        return $responseBody;
     }
 
     public function get_sucursales()
